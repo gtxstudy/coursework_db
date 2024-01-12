@@ -1,4 +1,4 @@
-package org.stpdiron.coursedbspring
+package org.stpdiron.coursedbspring.confs
 
 import com.github.kotlintelegrambot.bot
 import com.github.kotlintelegrambot.dispatch
