@@ -6,28 +6,25 @@ import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.WebApplicationType
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.builder.SpringApplicationBuilder
-import org.stpdiron.coursedbspring.repos.UserRepo
+import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories
+import org.stpdiron.coursedbspring.repos.UserRepository
 import org.stpdiron.coursedbspring.services.DatabaseInitService
-import java.time.LocalDateTime
 
 @SpringBootApplication
+@EnableJdbcRepositories("org.stpdiron.coursedbspring")
 class CoursedbSpringApplication(
     private val bot: Bot,
-    private val repo: UserRepo,
+    private val repo: UserRepository,
     private val initService: DatabaseInitService
 ) : CommandLineRunner {
     private val logger = KotlinLogging.logger {}
 
     override fun run(vararg args: String?) {
         logger.info { "Hi!" }
-        testRepo()
         initService.init()
         bot.startPolling()
     }
 
-    fun testRepo() {
-        repo.save(User(null, LocalDateTime.now(), true, 0, 0));
-    }
 
 }
 

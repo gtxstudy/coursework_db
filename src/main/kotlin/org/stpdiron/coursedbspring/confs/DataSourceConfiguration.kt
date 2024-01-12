@@ -13,7 +13,6 @@ import org.springframework.transaction.TransactionManager
 import javax.sql.DataSource
 
 @Configuration
-@EnableJdbcRepositories
 class DataSourceConfiguration(
     @Value("\${postgres.url}")
     private val url: String,

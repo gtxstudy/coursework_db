@@ -1,10 +1,8 @@
--- noinspection SqlDialectInspectionForFile
--- noinspection SqlNoDataSourceInspectionForFile
-drop type if exists sex_enum;
+DROP TYPE if EXISTS sex_enum CASCADE;
 create type sex_enum as enum ('male', 'female', 'other');
-drop type if exists goal_enum;
+drop type if exists goal_enum CASCADE;
 create type goal_enum as enum ('work', 'study', 'science', 'relationship', 'friendship');
-drop type if exists reaction_type_enum;
+drop type if exists reaction_type_enum CASCADE;
 create type reaction_type_enum as enum ('like', 'skip');
 
 drop table if exists service_user cascade;
@@ -96,7 +94,7 @@ create table field_of_study (
 
 CREATE OR REPLACE function inc_reactions() RETURNS trigger
 language plpgsql
-as $$
+as '
 begin
     update service_user
     set reactions_from = reactions_from + 1
@@ -107,7 +105,7 @@ begin
     where id = NEW.to_id;
      return NEW;
 end;
-$$;
+';
 
 drop trigger if exists tr_inc_reactions on reaction;
 CREATE TRIGGER tr_inc_reactions
@@ -118,12 +116,12 @@ EXECUTE PROCEDURE inc_reactions();
 
 CREATE OR REPLACE function profile_set_modified() RETURNS trigger
 language plpgsql
-as $$
+as '
 begin
     NEW.modified = NOW()::TIMESTAMP;
     return NEW;
 end;
-$$;
+';
 
 drop trigger if exists tr_mod_profile on profile;
 CREATE TRIGGER tr_mod_profile
@@ -134,8 +132,8 @@ EXECUTE PROCEDURE profile_set_modified();
 
 CREATE OR REPLACE function delete_interest_if_unused()  returns trigger
 language plpgsql
-as $$
-declare 
+as '
+declare
 refs Integer := 0;
 begin
     select count(*) from profile_interest_relation
@@ -147,7 +145,7 @@ begin
   end if;
   return OLD;
 end;
-$$;
+';
 
 drop trigger if exists tr_delete_interest on profile_interest_relation;
 CREATE TRIGGER tr_delete_interest
@@ -158,7 +156,7 @@ EXECUTE PROCEDURE delete_interest_if_unused();
 
 drop function if exists get_recomendations;
 CREATE OR REPLACE function get_recomendations(pr_id Integer, n Integer) returns SETOF profile
-as $$
+as '
   select p2 from profile as p1
   join profile_interest_relation as pr on (pr.profile_id = p1.id)
   join interest as i1 on (i1.id  = pr.interest_id)
@@ -167,18 +165,18 @@ as $$
   join interest as i2 on (i2.id = pr2.interest_id)
   where p1.id = pr_id
   group by pr2.profile_id, p1.id, pr.profile_id, pr.interest_id, i1.id, p2.id,
-  pr2.interest_id, i2.id 
-  order by abs(p2.age - p1.age), 
+  pr2.interest_id, i2.id
+  order by abs(p2.age - p1.age),
   count((
     select id from area_of_interest
     where (id = i1.area_id and id = i2.area_id)
   ))
   limit n;
-$$
+'
 language sql;
 
 -------
 
-create unique index if not exists profile_id_hash_index on profile using hash (id);
-create unique index if not exists service_user_id_hash_index on service_user using hash (id);
-create unique index if not exists interest_id_hash_index on interest using hash (id);
+create index if not exists profile_id_hash_index on profile using hash (id);
+create index if not exists service_user_id_hash_index on service_user using hash (id);
+create index if not exists interest_id_hash_index on interest using hash (id);
