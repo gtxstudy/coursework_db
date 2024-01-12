@@ -6,10 +6,12 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.9.21'
     id 'org.jetbrains.kotlin.plugin.spring' version '1.9.21'
     id 'org.jetbrains.kotlin.plugin.jpa' version '1.9.21'
+    id 'org.jetbrains.kotlin.kapt' version '1.2.31'
 }
 
 group = 'org.stpdiron'
 version = '0.0.1-SNAPSHOT'
+
 
 java {
     sourceCompatibility = '17'
@@ -26,6 +28,7 @@ dependencies {
     implementation 'io.github.oshai:kotlin-logging-jvm:5.1.0'
     implementation 'org.postgresql:postgresql:42.7.1'
     implementation 'com.github.kotlin-telegram-bot.kotlin-telegram-bot:dispatcher:6.1.0'
+    kapt "org.springframework.boot:spring-boot-configuration-processor"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

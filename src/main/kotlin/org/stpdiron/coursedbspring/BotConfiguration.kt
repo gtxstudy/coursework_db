@@ -1,6 +1,5 @@
 package org.stpdiron.coursedbspring
 
-import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.bot
 import com.github.kotlintelegrambot.dispatch
 import com.github.kotlintelegrambot.dispatcher.command
@@ -8,15 +7,19 @@ import com.github.kotlintelegrambot.dispatcher.photos
 import com.github.kotlintelegrambot.dispatcher.text
 import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.logging.LogLevel
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class BotConfiguration {
+class BotConfiguration(
+    @Value("\${telegram.token}")
+    private val token: String
+){
 
     @Bean
     fun getBot() = bot {
-        token = ""
+        token = this@BotConfiguration.token
         timeout = 30
         logLevel = LogLevel.Network.Body
         dispatch {
