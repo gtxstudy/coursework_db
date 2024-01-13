@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.datasource.DataSourceTransactionManager
 import org.springframework.transaction.TransactionManager
+import org.stpdiron.coursedbspring.repos.*
 import javax.sql.DataSource
 
 @Configuration
@@ -31,6 +32,11 @@ class DataSourceConfiguration(
         .password(password)
         .build();
 
+    override fun userConverters(): MutableList<*> {
+        return mutableListOf(UserStateWriteConverter(), UserStateReadConverter(),
+            ReactionReadConverter(), ReactionWriteConverter(), SexReadConverter(),
+            SexWriteConverter(), GoalReadConverter(), GoalWriteConverter())
+    }
     @Bean
     fun namedParameterJdbcOperations(dataSource: DataSource): NamedParameterJdbcOperations = NamedParameterJdbcTemplate(dataSource);
 

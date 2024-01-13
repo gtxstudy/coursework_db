@@ -9,6 +9,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories
 import org.stpdiron.coursedbspring.repos.UserRepository
 import org.stpdiron.coursedbspring.services.DatabaseInitService
+import java.time.LocalDateTime
 
 @SpringBootApplication
 @EnableJdbcRepositories("org.stpdiron.coursedbspring")
@@ -22,6 +23,15 @@ class CoursedbSpringApplication(
     override fun run(vararg args: String?) {
         logger.info { "Hi!" }
         initService.init()
+        val newUser = User(
+            null,
+            0,
+            UserStateEnum.SET_NAME,
+            LocalDateTime.now(),
+            true,
+            0,0
+        )
+//        repo.save(newUser)
         bot.startPolling()
     }
 }

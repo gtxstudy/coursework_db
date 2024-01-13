@@ -6,9 +6,12 @@ import org.springframework.data.repository.CrudRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-enum class UserStateEnum { NEW, SET_ACTIVE, SET_NAME, SET_AGE, SET_SEX, SET_COUNTRY, SET_CITY, SET_GOAL, SET_ABOUT, SET_UNIVERSITY, SET_FACULTY, SET_FIELD_OF_STUDY, SET_IMAGES, VIEW_PROFILES, VIEW_LIKED_PROFILES }
+enum class UserStateEnum {
+     SET_NAME, SET_AGE, SET_GENDER, SET_GOAL, SET_CITY, SET_UNIVERSITY,
+    SET_FACULTY, SET_DESCRIPTION, SET_FIELD_OF_STUDY, SET_IMAGES, BROWSING
+}
 @Table("service_user")
-class User(
+data class User(
     @Id
     val id: Long?,
     val userId: Long,
@@ -20,7 +23,7 @@ class User(
 )
 
 enum class ReactionType { LIKE, SKIP }
-class Reaction(
+data class Reaction(
     @Id
     val id: Long?,
     val fromId: Long,
@@ -31,22 +34,22 @@ class Reaction(
 
 enum class SexEnum { M, F, OTHER }
 enum class GoalEnum { WORK, STUDY, SCIENCE, RELATIONSHIP, FRIENDSHIP }
-class Profile(
+data class Profile(
     @Id
     val id: Long?,
     val userId: Long,
-    val name: String,
+    val name: String?,
     val age: Long?,
     val sex: SexEnum?,
     val fieldOfStudyId: Long?,
     val country: String?,
     val city: String?,
     val about: String?,
-    val goal: GoalEnum,
+    val goal: GoalEnum?,
     val modified: LocalDateTime,
 )
 
-class Image(
+data class Image(
     @Id
     val id: Long?,
     val profileId: Long,
@@ -54,7 +57,7 @@ class Image(
     val uploaded: LocalDateTime,
 )
 
-class University(
+data class University(
     @Id
     val id: Long?,
     val name: String,
@@ -62,14 +65,14 @@ class University(
     val city: String?,
 )
 
-class Faculty(
+data class Faculty(
     @Id
     val id: Long?,
     val universityId: Long,
     val name: String,
 )
 
-class FieldOfStudy(
+data class FieldOfStudy(
     @Id
     val id: Long?,
     val facultyId: Long,

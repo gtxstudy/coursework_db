@@ -6,23 +6,24 @@ import com.github.kotlintelegrambot.dispatcher.command
 import com.github.kotlintelegrambot.dispatcher.photos
 import com.github.kotlintelegrambot.dispatcher.text
 import com.github.kotlintelegrambot.entities.ChatId
+import com.github.kotlintelegrambot.entities.TelegramFile
 import com.github.kotlintelegrambot.logging.LogLevel
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.stpdiron.coursedbspring.User
-import org.stpdiron.coursedbspring.UserStateEnum
-import org.stpdiron.coursedbspring.services.DataService
-import java.time.LocalDateTime
+import org.stpdiron.coursedbspring.services.UserService
 
 @Configuration
 class BotConfiguration(
     @Value("\${telegram.token}")
     private val token: String,
     @Autowired
-    private val dataService: DataService,
+    private val userService: UserService,
 ){
+    private val logger = KotlinLogging.logger {}
+    var mediaId : String? = null
 
     @Bean
     fun getBot() = bot {
@@ -32,42 +33,29 @@ class BotConfiguration(
 
         dispatch {
             command("start") {
-                // create user and set initial state
-                bot.sendMessage(ChatId.fromId(message.chat.id), text = "123")
-                val userId: Long = message.from?.id!!
-                print(userId)
-                var user: User? = dataService.userRepo.findByUserId(userId)
-                if (user == null) {
-                    user = User(null, userId, UserStateEnum.NEW, LocalDateTime.now(), true, 0, 0)
-                    dataService.userRepo.save(user)
+                message.from?.id?.let {
+                    userService.createUserIfNew(it)
+                    bot.sendMessage(ChatId.fromId(message.chat.id), text = "Введите ваше имя")
                 }
-                bot.sendMessage(ChatId.fromId(message.chat.id), text = "hi")
-                println("555")
             }
-            command("profile")
-            {
-
-            }
-            command("update_profile")
-            {
-
-            }
-            command("like")
-            {
-
-            }
-            command("skip")
-            {
-
-            }
-            /*
             text {
-                // switch user state and use content of the message we got
-                bot.sendMessage(ChatId.fromId(message.chat.id), text = text)
+                logger.info { "got text" }
+                if (message.text!![0] != '/')
+                    userService.handleMessage(bot, message)
             }
-            */
             photos {
-                // write photos in db
+                this.media.firstOrNull()?.let {
+                    mediaId = it.fileId
+                }
+            }
+            command("lastPhoto") {
+                mediaId?.let {
+                    bot.sendPhoto(
+                        chatId = ChatId.fromId(message.chat.id),
+                        photo = TelegramFile.ByFileId(it),
+                        caption = "WOW!"
+                    )
+                } ?: bot.sendMessage(ChatId.fromId(message.chat.id), "nothing to send")
             }
         }
     }

@@ -1,13 +1,3 @@
-DROP TYPE if EXISTS sex_enum CASCADE;
-create type sex_enum as enum ('male', 'female', 'other');
-drop type if exists goal_enum CASCADE;
-create type goal_enum as enum ('work', 'study', 'science', 'relationship', 'friendship');
-drop type if exists reaction_type_enum CASCADE;
-create type reaction_type_enum as enum ('like', 'skip');
-drop type if exists state_enum CASCADE;
-create type state_enum as enum ('new', 'set_active', 'set_name', 'set_age', 'set_sex', 'set_country', 'set_city', 'set_goal', 'set_about', 'set_university', 'set_faculty', 'set_field_of_study', 'set_images', 'view_profiles', 'view_liked_profiles');
-
-
 drop table if exists university cascade;
 create table university (
 	id serial primary key,
@@ -34,8 +24,8 @@ create table field_of_study (
 drop table if exists service_user cascade;
 create table service_user (
 	id serial primary key,
-	user_id int not null,
-	state state_enum not null,
+	user_id bigint unique not null,
+	state varchar(32) not null,
 	created timestamp,
 	active boolean not null,
 	reactions_from int not null check (reactions_from >= 0),
@@ -46,14 +36,14 @@ drop table if exists profile cascade;
 create table profile (
 	id serial primary key,
 	user_id int unique not null references service_user (id),
-	name varchar(64) not null,
+	name varchar(64),
 	age int check (age > 0),
-	sex sex_enum,
-	field_of_study_id int not null references field_of_study (id),
+	sex varchar(32),
+	field_of_study_id int references field_of_study (id),
 	country varchar(64),
 	city varchar(64),
-	about text,
-	goal goal_enum not null,
+	about varchar(1024),
+	goal varchar(32),
 	modified timestamp
 );
 
@@ -70,7 +60,7 @@ create table reaction (
 	id serial primary key,
 	from_id int not null references service_user (id),
 	to_id int not null references service_user (id),
-	type reaction_type_enum not null,
+	type varchar(32) not null,
 	at timestamp
 );
 
@@ -114,53 +104,5 @@ EXECUTE PROCEDURE profile_set_modified();
 
 -------
 
-CREATE OR REPLACE function delete_interest_if_unused()  returns trigger
-language plpgsql
-as '
-declare
-refs Integer := 0;
-begin
-    select count(*) from profile_interest_relation
-    into refs
-    where interest_id = OLD.interest_id;
-
-  if refs < 1 then
-    delete from interest where id = inter_id;
-  end if;
-  return OLD;
-end;
-';
-
-drop trigger if exists tr_delete_interest on profile_interest_relation;
-CREATE TRIGGER tr_delete_interest
-AFTER DELETE ON profile_interest_relation FOR EACH ROW
-EXECUTE PROCEDURE delete_interest_if_unused();
-
--------
-
-drop function if exists get_recomendations;
-CREATE OR REPLACE function get_recomendations(pr_id Integer, n Integer) returns SETOF profile
-as '
-  select p2 from profile as p1
-  join profile_interest_relation as pr on (pr.profile_id = p1.id)
-  join interest as i1 on (i1.id  = pr.interest_id)
-  join profile as p2 on (p2.city = p1.city and p2.goal = p1.goal)
-  join profile_interest_relation as pr2 on (pr.profile_id = p2.id)
-  join interest as i2 on (i2.id = pr2.interest_id)
-  where p1.id = pr_id
-  group by pr2.profile_id, p1.id, pr.profile_id, pr.interest_id, i1.id, p2.id,
-  pr2.interest_id, i2.id
-  order by abs(p2.age - p1.age),
-  count((
-    select id from area_of_interest
-    where (id = i1.area_id and id = i2.area_id)
-  ))
-  limit n;
-'
-language sql;
-
--------
-
 create index if not exists profile_id_hash_index on profile using hash (id);
 create index if not exists service_user_id_hash_index on service_user using hash (id);
-create index if not exists interest_id_hash_index on interest using hash (id);
