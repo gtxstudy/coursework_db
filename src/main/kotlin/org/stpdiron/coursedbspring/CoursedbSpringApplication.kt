@@ -24,8 +24,6 @@ class CoursedbSpringApplication(
         initService.init()
         bot.startPolling()
     }
-
-
 }
 
 fun main(args: Array<String>) {
