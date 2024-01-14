@@ -8,7 +8,8 @@ import java.time.LocalDateTime
 
 enum class UserStateEnum {
      SET_NAME, SET_AGE, SET_GENDER, SET_GOAL, SET_CITY, SET_UNIVERSITY,
-    SET_FACULTY, SET_DESCRIPTION, SET_FIELD_OF_STUDY, SET_IMAGES, BROWSING
+    SET_FACULTY, SET_DESCRIPTION, SET_FIELD_OF_STUDY, SET_IMAGES, BROWSING,
+    SET_STUDY_YEAR
 }
 @Table("service_user")
 data class User(
@@ -43,10 +44,16 @@ data class Profile(
     val sex: SexEnum?,
     val fieldOfStudyId: Long?,
     val country: String?,
-    val city: String?,
+    val city: Long?,
     val about: String?,
     val goal: GoalEnum?,
     val modified: LocalDateTime,
+)
+
+data class City(
+    @Id
+    val id: Long?,
+    val name: String
 )
 
 data class Image(
@@ -61,8 +68,7 @@ data class University(
     @Id
     val id: Long?,
     val name: String,
-    val country: String?,
-    val city: String?,
+    val city: Long,
 )
 
 data class Faculty(
@@ -75,7 +81,7 @@ data class Faculty(
 data class FieldOfStudy(
     @Id
     val id: Long?,
-    val facultyId: Long,
-    val name: String,
-    val year: Long,
+    val universityId: Long,
+    val name: String?,
+    val year: Long?,
 )

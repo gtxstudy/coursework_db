@@ -2,9 +2,7 @@ package org.stpdiron.coursedbspring.confs
 
 import com.github.kotlintelegrambot.bot
 import com.github.kotlintelegrambot.dispatch
-import com.github.kotlintelegrambot.dispatcher.command
-import com.github.kotlintelegrambot.dispatcher.photos
-import com.github.kotlintelegrambot.dispatcher.text
+import com.github.kotlintelegrambot.dispatcher.*
 import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.TelegramFile
 import com.github.kotlintelegrambot.logging.LogLevel
@@ -39,9 +37,12 @@ class BotConfiguration(
                 }
             }
             text {
-                logger.info { "got text" }
+                logger.info { "got text: <${message.text}>" }
                 if (message.text!![0] != '/')
                     userService.handleMessage(bot, message)
+            }
+            callbackQuery {
+                userService.handleCallback(bot, callbackQuery)
             }
             photos {
                 this.media.firstOrNull()?.let {

@@ -1,23 +1,22 @@
 drop table if exists university cascade;
 create table university (
 	id serial primary key,
-	name varchar(64) not null,
-	country varchar(64),
-	city varchar(64)
+	name varchar(64) unique not null,
+	city int not null references city (id)
 );
 
-drop table if exists faculty cascade;
-create table faculty (
-	id serial primary key,
-	university_id int not null references university (id),
-	name varchar(64) not null
-);
+-- drop table if exists faculty cascade;
+-- create table faculty (
+-- 	id serial primary key,
+-- 	university_id int not null references university (id),
+-- 	name varchar(64) not null
+-- );
 
 drop table if exists field_of_study cascade;
 create table field_of_study (
 	id serial primary key,
-	faculty_id int not null references faculty (id),
-	name varchar(64) not null,
+	university_id int not null references university (id),
+	name varchar(64),
 	year int check (year > 0)
 );
 
@@ -32,6 +31,12 @@ create table service_user (
 	reactions_to int not null check (reactions_to >= 0)
 );
 
+drop table if exists city cascade;
+create table city (
+    id serial primary key,
+    name varchar(64) unique
+);
+
 drop table if exists profile cascade;
 create table profile (
 	id serial primary key,
@@ -41,7 +46,7 @@ create table profile (
 	sex varchar(32),
 	field_of_study_id int references field_of_study (id),
 	country varchar(64),
-	city varchar(64),
+	city int references city (id),
 	about varchar(1024),
 	goal varchar(32),
 	modified timestamp
@@ -106,3 +111,9 @@ EXECUTE PROCEDURE profile_set_modified();
 
 create index if not exists profile_id_hash_index on profile using hash (id);
 create index if not exists service_user_id_hash_index on service_user using hash (id);
+
+-------
+
+insert into city (name) values ('Санкт-Петербург'), ('Москва');
+
+insert into university (name, city) values ('ИТМО', 1), ('СПБГУ', 1);
