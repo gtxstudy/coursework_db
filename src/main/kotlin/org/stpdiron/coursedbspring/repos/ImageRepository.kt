@@ -5,4 +5,6 @@ import org.stpdiron.coursedbspring.Image
 
 interface ImageRepository: CrudRepository<Image, Long> {
     fun findByProfileId(profileId: Long): List<Image>
+
+    fun deleteByProfileId(profileId: Long)
 }

@@ -19,19 +19,18 @@ abstract class ChangeProfileHandler(
 
     val logger = KotlinLogging.logger {}
 
-    abstract fun mutateProfile(message: String, user: User, profile: Profile): Profile?
+    abstract fun mutateProfile(message: Message, user: User, profile: Profile): Profile?
 
     abstract fun successMessage(bot: Bot, chatId: Long): TelegramBotResult<out Any>
 
     override fun handle(user: User, bot: Bot, message: Message): TelegramBotResult<out Any>  {
         return profileRepo.findByUserId(user.id!!).let { pr ->
             logger.warn { "Changing profile in progress" }
-            message.text?.let { msg ->
-                mutateProfile(msg, user, pr)?.let {
-                    profileRepo.save(it)
-                    userRepo.save(user.copy(state = nextState()))
-                    successMessage(bot, message.chat.id)
-                }
+
+            mutateProfile(message, user, pr)?.let {
+                profileRepo.save(it)
+                userRepo.save(user.copy(state = nextState()))
+                successMessage(bot, message.chat.id)
             }
         } ?: bot.sendMessage(
             ChatId.fromId(message.chat.id),

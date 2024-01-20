@@ -1,3 +1,9 @@
+drop table if exists city cascade;
+create table city (
+    id serial primary key,
+    name varchar(64) unique
+);
+
 drop table if exists university cascade;
 create table university (
 	id serial primary key,
@@ -31,12 +37,6 @@ create table service_user (
 	reactions_to int not null check (reactions_to >= 0)
 );
 
-drop table if exists city cascade;
-create table city (
-    id serial primary key,
-    name varchar(64) unique
-);
-
 drop table if exists profile cascade;
 create table profile (
 	id serial primary key,
@@ -56,7 +56,7 @@ drop table if exists image cascade;
 create table image (
 	id serial primary key,
 	profile_id int not null references profile (id),
-	file_path varchar(256) not null,
+	tg_id varchar(256) not null,
 	uploaded timestamp
 );
 
@@ -65,6 +65,7 @@ create table reaction (
 	id serial primary key,
 	from_id int not null references service_user (id),
 	to_id int not null references service_user (id),
+	seen boolean,
 	type varchar(32) not null,
 	at timestamp
 );

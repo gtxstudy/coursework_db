@@ -6,8 +6,12 @@ import org.springframework.data.repository.CrudRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
 
+enum class CommandEnum {
+    START, CHANGE_PROFILE, SHOW_PROFILE, BROWSE,
+}
+
 enum class UserStateEnum {
-     SET_NAME, SET_AGE, SET_GENDER, SET_GOAL, SET_CITY, SET_UNIVERSITY,
+    NULL, SET_NAME, SET_AGE, SET_GENDER, SET_GOAL, SET_CITY, SET_UNIVERSITY,
     SET_FACULTY, SET_DESCRIPTION, SET_FIELD_OF_STUDY, SET_IMAGES, BROWSING,
     SET_STUDY_YEAR
 }
@@ -18,7 +22,7 @@ data class User(
     val userId: Long,
     var state: UserStateEnum,
     val created: LocalDateTime,
-    var active: Boolean,
+    val active: Boolean,
     val reactionsFrom: Long,
     val reactionsTo: Long,
 )
@@ -29,6 +33,7 @@ data class Reaction(
     val id: Long?,
     val fromId: Long,
     val toId: Long,
+    val seen: Boolean,
     val type: ReactionType,
     val at: LocalDateTime,
 )
@@ -48,7 +53,10 @@ data class Profile(
     val about: String?,
     val goal: GoalEnum?,
     val modified: LocalDateTime,
-)
+) {
+    fun getDescription(city: City?, fieldOfStudy: FieldOfStudy?, university: University?) =
+        "$name, $age, ${city?.name}\n${university?.name}, ${fieldOfStudy?.name}, ${fieldOfStudy?.year}\n\n$about"
+}
 
 data class City(
     @Id
@@ -60,7 +68,7 @@ data class Image(
     @Id
     val id: Long?,
     val profileId: Long,
-    val path: String,
+    val tgId: String,
     val uploaded: LocalDateTime,
 )
 

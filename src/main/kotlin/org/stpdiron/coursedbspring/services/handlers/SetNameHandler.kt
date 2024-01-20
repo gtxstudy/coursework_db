@@ -14,8 +14,8 @@ import java.time.LocalDateTime
 class SetNameHandler(profileRepo: ProfileRepository, userRepo: UserRepository) :
     ChangeProfileHandler(profileRepo, userRepo) {
 
-    override fun mutateProfile(message: String, user: User, profile: Profile): Profile?
-        = profile.copy(name = message)
+    override fun mutateProfile(message: Message, user: User, profile: Profile): Profile?
+        = profile.copy(name = message.text)
 
     override fun successMessage(bot: Bot, chatId: Long) = bot.sendMessage(
         ChatId.fromId(chatId),

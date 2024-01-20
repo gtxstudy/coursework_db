@@ -3,6 +3,7 @@ package org.stpdiron.coursedbspring.services.handlers
 import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.KeyboardReplyMarkup
+import com.github.kotlintelegrambot.entities.Message
 import com.github.kotlintelegrambot.entities.keyboard.KeyboardButton
 import com.github.kotlintelegrambot.types.TelegramBotResult
 import org.springframework.stereotype.Component
@@ -20,8 +21,8 @@ class SetAgeHandler(profileRepo: ProfileRepository, userRepo: UserRepository) :
         listOf(KeyboardButton("Мужчина")),
         listOf(KeyboardButton("Женщина"))
     )
-    override fun mutateProfile(message: String, user: User, profile: Profile) : Profile? =
-        message.toLongOrNull()?.let {
+    override fun mutateProfile(message: Message, user: User, profile: Profile) : Profile? =
+        message.text?.toLongOrNull()?.let {
             profile.copy(age = it)
         }
 

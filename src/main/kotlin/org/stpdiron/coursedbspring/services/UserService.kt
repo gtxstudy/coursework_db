@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.stpdiron.coursedbspring.*
 import org.stpdiron.coursedbspring.repos.*
+import org.stpdiron.coursedbspring.services.handlers.CommandHandler
 import org.stpdiron.coursedbspring.services.handlers.UserCallbackHandler
 import org.stpdiron.coursedbspring.services.handlers.UserMessageHandler
 import java.time.LocalDateTime
@@ -19,7 +20,8 @@ class UserService(
     private val userRepo: UserRepository,
     private val profileRepo: ProfileRepository,
     private val msgHandlers: Map<UserStateEnum, UserMessageHandler>,
-    private val callbackHandlers: Map<UserStateEnum, UserCallbackHandler>
+    private val callbackHandlers: Map<UserStateEnum, UserCallbackHandler>,
+    private val commandHandlers: Map<CommandEnum, CommandHandler>,
 ){
     private val logger = KotlinLogging.logger {}
     fun handleMessage(bot: Bot, message: Message) =
@@ -54,13 +56,29 @@ class UserService(
             bot.sendMessage(ChatId.fromId(callback.message!!.chat.id), "Ошибка сервера")
         }
 
+    fun handleCommand(bot: Bot, message: Message, command: CommandEnum) =
+        try {
+            logger.warn { "got user id ${message.from?.id}" }
+            message.from?.id?.let {
+                userRepo.findByUserId(it)?.let { user ->
+                    logger.warn { "got user $user" }
+                    logger.warn { "now executing command {${command}}" }
+                    commandHandlers[command]?.execute(user, bot, message)
+                }
+            }
+        } catch (e: Exception) {
+            logger.error { e.message }
+            bot.sendMessage(ChatId.fromId(message.chat.id), "Ошибка сервера")
+        }
+
+
     @Transactional
     fun createUserIfNew(userId: Long){
         try {
             val user = User(
                 null,
                 userId,
-                UserStateEnum.SET_NAME,
+                UserStateEnum.NULL,
                 LocalDateTime.now(),
                 false,
                 0,0

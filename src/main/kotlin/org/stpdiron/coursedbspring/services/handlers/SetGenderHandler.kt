@@ -3,6 +3,7 @@ package org.stpdiron.coursedbspring.services.handlers
 import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.InlineKeyboardMarkup
+import com.github.kotlintelegrambot.entities.Message
 import com.github.kotlintelegrambot.entities.keyboard.InlineKeyboardButton
 import com.github.kotlintelegrambot.types.TelegramBotResult
 import org.springframework.stereotype.Component
@@ -20,8 +21,8 @@ class SetGenderHandler(
     userRepo: UserRepository,
     private val cityRepo: CityRepository
 ) : ChangeProfileHandler(profileRepo, userRepo) {
-    override fun mutateProfile(message: String, user: User, profile: Profile) =
-        when (message) {
+    override fun mutateProfile(message: Message, user: User, profile: Profile) =
+        when (message.text) {
             "Мужчина" -> profile.copy(sex = SexEnum.M)
             "Женщина" -> profile.copy(sex = SexEnum.F)
             else -> null
