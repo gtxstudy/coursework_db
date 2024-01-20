@@ -34,17 +34,23 @@ class BotConfiguration(
         logLevel = LogLevel.Network.Body
 
         dispatch {
+            command("start") {
+                message.from?.id?.let {
+                    userService.createUserIfNew(it)
+                    bot.sendMessage(ChatId.fromId(message.chat.id), text = "Добро пожаловать!")
+                }
+            }
             command("change_profile") {
                 userService.handleCommand(bot, message, CommandEnum.CHANGE_PROFILE)
             }
             command("show_profile") {
                 userService.handleCommand(bot, message, CommandEnum.SHOW_PROFILE)
             }
-            command("start") {
-                message.from?.id?.let {
-                    userService.createUserIfNew(it)
-                    bot.sendMessage(ChatId.fromId(message.chat.id), text = "Добро пожаловать!")
-                }
+            command("browse") {
+                userService.handleCommand(bot, message, CommandEnum.BROWSE)
+            }
+            command("browse_incoming") {
+                userService.handleCommand(bot, message, CommandEnum.BROWSE_INCOMING)
             }
             text {
                 logger.info { "got text: <${message.text}>" }

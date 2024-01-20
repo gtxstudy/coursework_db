@@ -27,4 +27,6 @@ interface ReactionRepository: CrudRepository<Reaction, Long> {
     fun findByToId(toId: Long): List<Reaction>
 
     fun findByFromId(fromId: Long): List<Reaction>
+
+    fun findByFromIdAndAndToId(fromId: Long, toId: Long): Reaction?
 }

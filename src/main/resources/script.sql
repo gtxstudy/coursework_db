@@ -118,3 +118,25 @@ create index if not exists service_user_id_hash_index on service_user using hash
 insert into city (name) values ('Санкт-Петербург'), ('Москва');
 
 insert into university (name, city) values ('ИТМО', 1), ('СПБГУ', 1);
+
+insert into field_of_study (university_id, name, year) values (1, 'vt', 3);
+insert into field_of_study (university_id, name, year) values (2, 'sp', 3);
+insert into field_of_study (university_id, name, year) values (1, 'ct', 1);
+
+insert into service_user (user_id, state, created, active, reactions_from, reactions_to) values (0, 'NULL', timestamp '2023-12-19 23:12:54', true, 0, 0);
+insert into service_user (user_id, state, created, active, reactions_from, reactions_to) values (1, 'NULL', timestamp '2023-12-19 23:12:54', true, 0, 0);
+insert into service_user (user_id, state, created, active, reactions_from, reactions_to) values (2, 'NULL', timestamp '2023-12-19 23:12:54', true, 0, 0);
+insert into service_user (user_id, state, created, active, reactions_from, reactions_to) values (3, 'NULL', timestamp '2023-12-19 23:12:54', true, 0, 0);
+insert into service_user (user_id, state, created, active, reactions_from, reactions_to) values (4, 'NULL', timestamp '2023-12-19 23:12:54', true, 0, 0);
+
+insert into profile (user_id, name, age, sex, field_of_study_id, country, city, about, goal, modified) values (1, 'name1', 20, 'F', 2, 'russia', 1, 'descr 1', 'RELATIONSHIP', timestamp '2023-12-19 23:12:54');
+insert into profile (user_id, name, age, sex, field_of_study_id, country, city, about, goal, modified) values (2, 'name2', 21, 'M', 1, 'russia', 1, 'descr 2', 'RELATIONSHIP', timestamp '2023-12-19 23:12:54');
+insert into profile (user_id, name, age, sex, field_of_study_id, country, city, about, goal, modified) values (3, 'name3', 19, 'M', 3, 'russia', 1, 'descr 3', 'WORK', timestamp '2023-12-19 23:12:54');
+insert into profile (user_id, name, age, sex, field_of_study_id, country, city, about, goal, modified) values (4, 'name4', 24, 'F', 2, 'russia', 1, 'descr 4', 'RELATIONSHIP', timestamp '2023-12-19 23:12:54');
+insert into profile (user_id, name, age, sex, field_of_study_id, country, city, about, goal, modified) values (5, 'name5', 20, 'F', 3, 'russia', 1, 'descr 5', 'STUDY', timestamp '2023-12-19 23:12:54');
+
+insert into image (profile_id, tg_id, uploaded) values (1, 'AgACAgIAAxkBAAIC92WsIJfd5LKb1GEdXw6PXj-wU8G4AAJH3DEbpElgSaAjroMVv1aMAQADAgADcwADNAQ', timestamp '2023-12-19 23:12:54');
+insert into image (profile_id, tg_id, uploaded) values (2, 'AgACAgIAAxkBAAIC92WsIJfd5LKb1GEdXw6PXj-wU8G4AAJH3DEbpElgSaAjroMVv1aMAQADAgADcwADNAQ', timestamp '2023-12-19 23:12:54');
+insert into image (profile_id, tg_id, uploaded) values (3, 'AgACAgIAAxkBAAIC92WsIJfd5LKb1GEdXw6PXj-wU8G4AAJH3DEbpElgSaAjroMVv1aMAQADAgADcwADNAQ', timestamp '2023-12-19 23:12:54');
+insert into image (profile_id, tg_id, uploaded) values (4, 'AgACAgIAAxkBAAIC92WsIJfd5LKb1GEdXw6PXj-wU8G4AAJH3DEbpElgSaAjroMVv1aMAQADAgADcwADNAQ', timestamp '2023-12-19 23:12:54');
+insert into image (profile_id, tg_id, uploaded) values (5, 'AgACAgIAAxkBAAIC92WsIJfd5LKb1GEdXw6PXj-wU8G4AAJH3DEbpElgSaAjroMVv1aMAQADAgADcwADNAQ', timestamp '2023-12-19 23:12:54');
